@@ -45,6 +45,7 @@ recalbamfile=${pfx}_recal.bam
 #############################################
 
 if [ ! -f gatk_preprocessing/recalibration_done ]; then
+
 # compute table before
 java ${javaopts} -jar $GATK/gatk.jar \
 	BaseRecalibrator \
@@ -52,7 +53,7 @@ java ${javaopts} -jar $GATK/gatk.jar \
 	-R ${reference_fa} \
 	--known-sites ${dbsnp} \
 	-O ${outfolder}/${pfx}_recal_data.table \
-	--tmp-dir tmpfiles/
+	--tmp-dir tmpfiles
 
 # apply recalibration table
 java ${javaopts} -jar $GATK/gatk.jar \
@@ -67,7 +68,7 @@ java ${javaopts} -jar $GATK/gatk.jar \
 	--static-quantized-quals 10 \
 	--static-quantized-quals 20 \
 	--static-quantized-quals 30 \
-	--tmp-dir tmpfiles/
+	--tmp-dir tmpfiles
 
 # compute table after
 java ${javaopts} -jar $GATK/gatk.jar \
@@ -76,7 +77,7 @@ java ${javaopts} -jar $GATK/gatk.jar \
 	-R ${reference_fa} \
 	--known-sites ${dbsnp} \
 	-O ${outfolder}/${pfx}_recal_data_after.table \
-	--tmp-dir tmpfiles/
+	--tmp-dir tmpfiles
 
 # create plots from both tables
 java ${javaopts} -jar $GATK/gatk.jar \
@@ -85,7 +86,7 @@ java ${javaopts} -jar $GATK/gatk.jar \
 	-after ${outfolder}/${pfx}_recal_data_after.table \
 	-plots ${outfolder}/${pfx}_BQSR_report.pdf \
 	-csv ${outfolder}/${pfx}_BQSR-report.csv \
-	--tmp-dir tmpfiles/
+	--tmp-dir tmpfiles
 
 # Picard CollectMultipleMetrics on final BAM
 java ${javaopts} -jar $PICARD/picard.jar \
@@ -94,10 +95,14 @@ java ${javaopts} -jar $PICARD/picard.jar \
 	O=${outfolder}/${pfx}_multiple_metrics \
 	R=${reference_fa} \
 	MAX_RECORDS_IN_RAM=${recinram} \
-	TMP_DIR=tmpfiles/
+	TMP_DIR=tmpfiles
+
+fi
 
 }
 
 for bam in ${infolder}/*_mrkdup_srt-tags.bam; do
 runall ${bam} &
 done
+
+wait

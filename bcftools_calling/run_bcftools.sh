@@ -39,8 +39,10 @@ vcfout=bcftools_${chr}_multi.vcf.gz
   | java ${javaopts} -jar $SNPEFF/SnpSift.jar filter "countVariant()>0" \
   | bcftools filter -sLowQual -e'%QUAL<10' -g3 -G10 -O z \
     -o ${outfolder}/${vcfout%.vcf.gz}_filt.vcf.gz - \
-    && tabix -p vcf ${outfolder}/${vcfout%.vcf.gz}_filt.vcf.gz &
+    && tabix -p vcf ${outfolder}/${vcfout%.vcf.gz}_filt.vcf.gz) &
   
 done < ${chrlist}
+
+wait
 
 echo "# Please wait until all chromosomes are processed before running the next script"

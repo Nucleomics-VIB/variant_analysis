@@ -32,7 +32,7 @@ done < bcftools/main_chr.txt
 # normalize calls
 bcft=4
 vcf=bcftools/bcftools_${chr}_multi_4.vcf
-vcfout=bcftools/$(basename ${vcf%.vcf}_norm.vcf.gz
+vcfout=bcftools/$(basename ${vcf%.vcf}_norm.vcf.gz)
 bcftools norm \
   --threads ${bcft} \
   -f ${reference_fa} \
